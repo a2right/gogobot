@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoGoBot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #ffffff;
+      color: #0d0d0d;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      width: 260px;
+      background: #f7f7f8;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #ececf1;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 12px;
+      border-bottom: 1px solid #ececf1;
+    }
+
+    .new-chat-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid #c5c5d2;
+      color: #0d0d0d;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .new-chat-btn:hover {
+      background: #ececf1;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .history-section {
+      margin-bottom: 16px;
+    }
+
+    .history-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8e8ea0;
+      padding: 8px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      margin: 2px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .history-item:hover {
+      background: #ececf1;
+    }
+
+    .history-item.active {
+      background: #ececf1;
+      font-weight: 500;
+    }
+
+    .history-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .history-item-text {
+      flex: 1;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #0d0d0d;
+    }
+
+    .history-item-delete {
+      opacity: 0;
+      padding: 4px 8px;
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 12px;
+      transition: opacity 0.2s;
+    }
+
+    .history-item:hover .history-item-delete {
+      opacity: 1;
+    }
+
+    .history-item-delete:hover {
+      background: #fee2e2;
+    }
+
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid #ececf1;
+      font-size: 11px;
+      color: #8e8ea0;
+    }
+
+    /* 主聊天区域 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+      background: #ffffff;
+    }
+
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #ececf1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0d0d0d;
+    }
+
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .messages-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #messages {
+      flex: 1;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .message {
+      width: 100%;
+      padding: 24px 0;
+      display: flex;
+      gap: 24px;
+      animation: fadeIn 0.3s ease;
+      border-bottom: 1px solid #f7f7f8;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      background: transparent;
+    }
+
+    .message.assistant {
+      background: #f7f7f8;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .message.user .message-avatar {
+      background: #10a37f;
+    }
+
+    .message-content {
+      flex: 1;
+      line-height: 1.7;
+      font-size: 15px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      padding-top: 4px;
+      color: #0d0d0d;
+    }
+
+    .message.loading .message-content {
+      color: #8e8ea0;
+      font-style: italic;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .empty-state h1 {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      color: #0d0d0d;
+    }
+
+    .example-prompts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .example-prompt {
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      font-size: 14px;
+      color: #0d0d0d;
+    }
+
+    .example-prompt:hover {
+      background: #f7f7f8;
+      border-color: #10a37f;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .example-prompt-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #0d0d0d;
+    }
+
+    .example-prompt-text {
+      color: #6e6e80;
+      font-size: 13px;
+    }
+
+    /* 输入区域 */
+    .input-area {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px 24px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      box-shadow: 0 0 0 0 rgba(0,0,0,0);
+      transition: all 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #10a37f;
+      box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+    }
+
+    #userInput {
+      width: 100%;
+      padding: 16px 52px 16px 16px;
+      background: transparent;
+      border: none;
+      color: #0d0d0d;
+      font-family: inherit;
+      font-size: 15px;
+      resize: none;
+      outline: none;
+      max-height: 200px;
+    }
+
+    #userInput::placeholder {
+      color: #8e8ea0;
+    }
+
+    #sendBtn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      width: 32px;
+      height: 32px;
+      background: #10a37f;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      padding: 0;
+    }
+
+    #sendBtn:hover:not(:disabled) {
+      background: #0d8c6c;
+    }
+
+    #sendBtn:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    #sendBtn svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 14px;
+      border: 1px solid #fecaca;
+    }
+
+    /* 加载状态 */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #d1d5db;
+      border-top-color: #10a37f;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        transition: left 0.3s;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      #messages {
+        padding: 12px;
+      }
+
+      .message {
+        padding: 16px 0;
+        gap: 12px;
+      }
+
+      .input-area {
+        padding: 0 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 侧边栏 -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" onclick="startNewChat()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New chat
+      </button>
+    </div>
+    
+    <div class="sidebar-content" id="historyList">
+      <div class="history-section">
+        <div class="history-title">Today</div>
+        <!-- 历史记录将动态插入这里 -->
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div style="font-size: 12px; color: #6e6e80;">
+        GoGoBot Travel Assistant
+      </div>
+    </div>
+  </div>
+
+  <!-- 主聊天区域 -->
+  <div class="main-content">
+    <div class="chat-header">
+      <div class="chat-title" id="chatTitle">New Chat</div>
+    </div>
+
+    <div class="chat-container">
+      <div class="messages-wrapper">
+        <div id="messages">
+          <div class="empty-state">
+            <h1>GoGoBot</h1>
+            <div class="example-prompts">
+              <div class="example-prompt" onclick="useExample(this)">
+                <div class="example-prompt-title">🏖️ 三天新加坡之旅</div>
+                <div class="example-prompt-text">规划一个三天的新加坡旅行计划，预算1500新元</div>
+              </div>
+              <div class="example-prompt" onclick="useExample(this)">
+                <div class="example-prompt-title">🍜 美食探索</div>
+                <div class="example-prompt-text">推荐新加坡必吃的地道美食和餐厅</div>
+              </div>
+              <div class="example-prompt" onclick="useExample(this)">
+                <div class="example-prompt-title">🛍️ 购物指南</div>
+                <div class="example-prompt-text">介绍新加坡最好的购物中心和特色商店</div>
+              </div>
+              <div class="example-prompt" onclick="useExample(this)">
+                <div class="example-prompt-title">🌧️ 室内活动</div>
+                <div class="example-prompt-text">雨天适合去的室内景点有哪些？</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea 
+          id="userInput" 
+          rows="1"
+          placeholder="Send a message..."
+          onInput="autoResize(this)"
+        ></textarea>
+        <button id="sendBtn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:8000/api';
+
+    class ConversationManager {
+      constructor() {
+        this.currentConversationId = null;
+        this.conversations = new Map(); // 本地缓存：thread_id -> {title, messages}
+        this.loadConversationsFromStorage();
+      }
+
+      loadConversationsFromStorage() {
+        const stored = localStorage.getItem('conversations');
+        if (stored) {
+          try {
+            const data = JSON.parse(stored);
+            this.conversations = new Map(Object.entries(data));
+          } catch (e) {
+            console.error('Failed to load conversations:', e);
+          }
+        }
+      }
+
+      saveConversationsToStorage() {
+        const data = Object.fromEntries(this.conversations);
+        localStorage.setItem('conversations', JSON.stringify(data));
+      }
+
+      createNewConversation() {
+        this.currentConversationId = null; // 后端会生成
+        return null;
+      }
+
+      setCurrentConversation(threadId, title = 'New Chat') {
+        this.currentConversationId = threadId;
+        if (!this.conversations.has(threadId)) {
+          this.conversations.set(threadId, {
+            title: title,
+            messages: [],
+            updatedAt: Date.now()
+          });
+          this.saveConversationsToStorage();
+        }
+      }
+
+      updateConversationTitle(threadId, title) {
+        if (this.conversations.has(threadId)) {
+          const conv = this.conversations.get(threadId);
+          conv.title = title;
+          conv.updatedAt = Date.now();
+          this.saveConversationsToStorage();
+        }
+      }
+
+      addMessage(threadId, role, content) {
+        if (!this.conversations.has(threadId)) {
+          this.setCurrentConversation(threadId, this.generateTitle(content));
+        }
+        const conv = this.conversations.get(threadId);
+        conv.messages.push({ role, content });
+        conv.updatedAt = Date.now();
+        
+        // 如果是第一条用户消息，用它作为标题
+        if (conv.messages.length === 1 && role === 'user') {
+          conv.title = this.generateTitle(content);
+        }
+        
+        this.saveConversationsToStorage();
+      }
+
+      generateTitle(firstMessage) {
+        return firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '');
+      }
+
+      getConversation(threadId) {
+        return this.conversations.get(threadId);
+      }
+
+      getAllConversations() {
+        return Array.from(this.conversations.entries())
+          .map(([id, data]) => ({ id, ...data }))
+          .sort((a, b) => b.updatedAt - a.updatedAt);
+      }
+
+      deleteConversation(threadId) {
+        this.conversations.delete(threadId);
+        this.saveConversationsToStorage();
+        
+        // 如果删除的是当前对话，切换到新对话
+        if (this.currentConversationId === threadId) {
+          startNewChat();
+        }
+      }
+
+      getCurrentConversationId() {
+        return this.currentConversationId;
+      }
+    }
+
+    const conversationManager = new ConversationManager();
+    const messagesDiv = document.getElementById('messages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatTitle = document.getElementById('chatTitle');
+
+    function updateChatTitle(title) {
+      chatTitle.textContent = title || 'New Chat';
+    }
+
+    function renderHistoryList() {
+      const historyList = document.getElementById('historyList');
+      const conversations = conversationManager.getAllConversations();
+      
+      if (conversations.length === 0) {
+        historyList.innerHTML = '<div class="history-section"><div class="history-title">No history</div></div>';
+        return;
+      }
+
+      let html = '<div class="history-section"><div class="history-title">Recent</div>';
+      
+      conversations.forEach(conv => {
+        const isActive = conv.id === conversationManager.getCurrentConversationId();
+        html += `
+          <div class="history-item ${isActive ? 'active' : ''}" onclick="loadConversation('${conv.id}')">
+            <div class="history-item-icon">💬</div>
+            <div class="history-item-text">${conv.title}</div>
+            <button class="history-item-delete" onclick="event.stopPropagation(); deleteConversation('${conv.id}')">×</button>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      historyList.innerHTML = html;
+    }
+
+    function loadConversation(threadId) {
+      const conv = conversationManager.getConversation(threadId);
+      if (!conv) return;
+
+      conversationManager.currentConversationId = threadId;
+      
+      // 清空并重新渲染消息
+      messagesDiv.innerHTML = '';
+      conv.messages.forEach(msg => {
+        addMessageToUI(msg.role, msg.content);
+      });
+
+      updateChatTitle(conv.title);
+      renderHistoryList();
+    }
+
+    async function deleteConversation(threadId) {
+      if (!confirm('确定要删除这个对话吗？')) return;
+
+      try {
+        // 调用后端删除
+        await fetch(`${API_BASE_URL}/conversations/${threadId}`, {
+          method: 'DELETE'
+        });
+      } catch (error) {
+        console.error('Failed to delete from backend:', error);
+      }
+
+      // 本地删除
+      conversationManager.deleteConversation(threadId);
+      renderHistoryList();
+    }
+
+    function clearEmptyState() {
+      const emptyState = messagesDiv.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+    }
+
+    function addMessageToUI(role, content) {
+      clearEmptyState();
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = role === 'user' ? 'U' : 'G';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.textContent = content;
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(contentDiv);
+      messagesDiv.appendChild(messageDiv);
+      
+      messagesDiv.parentElement.parentElement.scrollTop = messagesDiv.parentElement.parentElement.scrollHeight;
+    }
+
+    function addErrorMessage(content) {
+      clearEmptyState();
+      const div = document.createElement('div');
+      div.className = 'error-message';
+      div.textContent = content;
+      messagesDiv.appendChild(div);
+      messagesDiv.parentElement.parentElement.scrollTop = messagesDiv.parentElement.parentElement.scrollHeight;
+    }
+
+    function showLoading() {
+      clearEmptyState();
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message assistant loading';
+      messageDiv.id = 'loading-msg';
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.innerHTML = '<div class="loading-spinner"></div>';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.textContent = 'Thinking...';
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(contentDiv);
+      messagesDiv.appendChild(messageDiv);
+      
+      messagesDiv.parentElement.parentElement.scrollTop = messagesDiv.parentElement.parentElement.scrollHeight;
+    }
+
+    function hideLoading() {
+      const loading = document.getElementById('loading-msg');
+      if (loading) loading.remove();
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      const currentThreadId = conversationManager.getCurrentConversationId();
+
+      addMessageToUI('user', text);
+      
+      // 保存到本地
+      if (currentThreadId) {
+        conversationManager.addMessage(currentThreadId, 'user', text);
+      }
+
+      userInput.value = '';
+      userInput.style.height = 'auto';
+      sendBtn.disabled = true;
+      showLoading();
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_input: text,
+            thread_id: currentThreadId  // 可能是 null（新对话）
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        hideLoading();
+        
+        // 后端返回的 thread_id
+        const threadId = data.thread_id;
+        
+        // 如果是新对话，设置 thread_id
+        if (!currentThreadId) {
+          conversationManager.setCurrentConversation(threadId, conversationManager.generateTitle(text));
+          updateChatTitle(conversationManager.getConversation(threadId).title);
+        }
+        
+        // 添加助手消息
+        addMessageToUI('assistant', data.response);
+        conversationManager.addMessage(threadId, 'assistant', data.response);
+        
+        renderHistoryList();
+      } catch (error) {
+        hideLoading();
+        console.error('Error:', error);
+        addErrorMessage(`⚠️ Connection error: ${error.message}\n\nPlease make sure the backend is running (python main.py --api)`);
+      } finally {
+        sendBtn.disabled = false;
+        userInput.focus();
+      }
+    }
+
+    function startNewChat() {
+      conversationManager.createNewConversation();
+      messagesDiv.innerHTML = `
+        <div class="empty-state">
+          <h1>GoGoBot</h1>
+          <div class="example-prompts">
+            <div class="example-prompt" onclick="useExample(this)">
+              <div class="example-prompt-title">🏖️ 三天新加坡之旅</div>
+              <div class="example-prompt-text">规划一个三天的新加坡旅行计划，预算1500新元</div>
+            </div>
+            <div class="example-prompt" onclick="useExample(this)">
+              <div class="example-prompt-title">🍜 美食探索</div>
+              <div class="example-prompt-text">推荐新加坡必吃的地道美食和餐厅</div>
+            </div>
+            <div class="example-prompt" onclick="useExample(this)">
+              <div class="example-prompt-title">🛍️ 购物指南</div>
+              <div class="example-prompt-text">介绍新加坡最好的购物中心和特色商店</div>
+            </div>
+            <div class="example-prompt" onclick="useExample(this)">
+              <div class="example-prompt-title">🌧️ 室内活动</div>
+              <div class="example-prompt-text">雨天适合去的室内景点有哪些？</div>
+            </div>
+          </div>
+        </div>
+      `;
+      updateChatTitle('New Chat');
+      renderHistoryList();
+      userInput.value = '';
+      userInput.style.height = 'auto';
+      userInput.focus();
+    }
+
+    function useExample(element) {
+      const text = element.querySelector('.example-prompt-text').textContent;
+      userInput.value = text;
+      userInput.focus();
+      autoResize(userInput);
+    }
+
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+    }
+
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // 初始化
+    renderHistoryList();
+    userInput.focus();
+
+    // 页面加载时测试后端连接
+    window.addEventListener('load', async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/conversations`);
+        if (response.ok) {
+          console.log('✅ Backend connected');
+        }
+      } catch (error) {
+        console.warn('⚠️ Backend not connected. Please run: python main.py --api');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "E01",
+    "difficulty": "easy",
+    "query": "规划一个1天的新加坡行程，预算200新元。",
+    "constraints": {"days": 1, "budget": 200}
+  },
+  {
+    "id": "E02",
+    "difficulty": "easy",
+    "query": "Plan a 1-day Singapore itinerary for a solo traveler, budget SGD 80.",
+    "constraints": {"days": 1, "budget": 80}
+  },
+  {
+    "id": "E03",
+    "difficulty": "easy",
+    "query": "帮我规划2天新加坡旅行，预算600新元，我喜欢文化和历史景点。",
+    "constraints": {"days": 2, "budget": 600}
+  },
+  {
+    "id": "E04",
+    "difficulty": "easy",
+    "query": "Plan a 2-day Singapore trip for a couple, budget SGD 400.",
+    "constraints": {"days": 2, "budget": 400}
+  },
+  {
+    "id": "E05",
+    "difficulty": "easy",
+    "query": "我想在新加坡玩3天，预算1000新元，偏好自然风光和公园。",
+    "constraints": {"days": 3, "budget": 1000}
+  },
+  {
+    "id": "E06",
+    "difficulty": "easy",
+    "query": "Plan a 3-day Singapore itinerary for a group of 4 friends, total budget SGD 1200.",
+    "constraints": {"days": 3, "budget": 1200}
+  },
+  {
+    "id": "E07",
+    "difficulty": "easy",
+    "query": "规划3天新加坡行程，预算800新元，我喜欢美食和夜生活。",
+    "constraints": {"days": 3, "budget": 800}
+  },
+  {
+    "id": "E08",
+    "difficulty": "easy",
+    "query": "Plan a 1-day Singapore itinerary focused on local street food, budget SGD 50.",
+    "constraints": {"days": 1, "budget": 50}
+  },
+  {
+    "id": "E09",
+    "difficulty": "easy",
+    "query": "帮我安排2天新加坡行程，预算500新元，主要想逛购物中心。",
+    "constraints": {"days": 2, "budget": 500}
+  },
+  {
+    "id": "E10",
+    "difficulty": "easy",
+    "query": "Plan a 3-day Singapore family trip, budget SGD 1500, with 2 adults.",
+    "constraints": {"days": 3, "budget": 1500}
+  },
+  {
+    "id": "M01",
+    "difficulty": "medium",
+    "query": "规划2天新加坡室内行程，预算600新元，因为最近天气不好，全程希望在室内活动。",
+    "constraints": {"days": 2, "budget": 600, "indoor_only": true}
+  },
+  {
+    "id": "M02",
+    "difficulty": "medium",
+    "query": "Plan a 2-day Singapore itinerary for a Muslim traveler, budget SGD 500. All meals must be halal.",
+    "constraints": {"days": 2, "budget": 500, "cuisine": ["halal"]}
+  },
+  {
+    "id": "M03",
+    "difficulty": "medium",
+    "query": "帮我规划3天新加坡行程，预算900新元，全程只坐地铁不打车。",
+    "constraints": {"days": 3, "budget": 900, "mrt_only": true}
+  },
+  {
+    "id": "M04",
+    "difficulty": "medium",
+    "query": "Plan a 1-day Singapore itinerary, budget SGD 150. We prefer outdoor activities and nature spots only.",
+    "constraints": {"days": 1, "budget": 150, "outdoor_only": true}
+  },
+  {
+    "id": "M05",
+    "difficulty": "medium",
+    "query": "规划2天新加坡亲子行程，预算800新元，有两个10岁以下的小孩，节奏要轻松，每天不超过3个景点。",
+    "constraints": {"days": 2, "budget": 800, "max_stops_per_day": 3}
+  },
+  {
+    "id": "M06",
+    "difficulty": "medium",
+    "query": "Plan a 3-day Singapore trip for a vegetarian traveler, budget SGD 700. All meals must be vegetarian.",
+    "constraints": {"days": 3, "budget": 700, "cuisine": ["vegetarian"]}
+  },
+  {
+    "id": "M07",
+    "difficulty": "medium",
+    "query": "我想游览新加坡3天，预算1000新元，希望以室内景点为主，因为我不喜欢晒太阳。",
+    "constraints": {"days": 3, "budget": 1000, "indoor_only": true}
+  },
+  {
+    "id": "M08",
+    "difficulty": "medium",
+    "query": "Plan a 2-day Singapore itinerary for a solo traveler, budget SGD 300. Prefer to walk or take MRT only, no taxi.",
+    "constraints": {"days": 2, "budget": 300, "no_taxi": true}
+  },
+  {
+    "id": "M09",
+    "difficulty": "medium",
+    "query": "规划1天新加坡行程，预算300新元，我们是一对情侣，希望体验浪漫的夜景和晚餐。",
+    "constraints": {"days": 1, "budget": 300}
+  },
+  {
+    "id": "M10",
+    "difficulty": "medium",
+    "query": "Plan a 3-day Singapore itinerary for a group of 6, budget SGD 2000 total. We need mostly indoor venues as some members have sun sensitivity.",
+    "constraints": {"days": 3, "budget": 2000, "indoor_only": true}
+  },
+  {
+    "id": "H01",
+    "difficulty": "hard",
+    "query": "帮我规划3天新加坡行程，总预算800新元，全程清真饮食，不坐出租车，每天景点不超过4个，节奏轻松。",
+    "constraints": {"days": 3, "budget": 800, "cuisine": ["halal"], "no_taxi": true, "max_stops_per_day": 4}
+  },
+  {
+    "id": "H02",
+    "difficulty": "hard",
+    "query": "Plan a 3-day Singapore itinerary for 2 people, total budget SGD 400. We are vegetarian, prefer outdoor activities, and want to stay within Central and East zones only.",
+    "constraints": {"days": 3, "budget": 400, "cuisine": ["vegetarian"], "outdoor_only": true}
+  },
+  {
+    "id": "H03",
+    "difficulty": "hard",
+    "query": "规划2天新加坡行程，预算500新元，全程室内，素食饮食，只坐地铁不打车。",
+    "constraints": {"days": 2, "budget": 500, "indoor_only": true, "cuisine": ["vegetarian"], "no_taxi": true}
+  },
+  {
+    "id": "H04",
+    "difficulty": "hard",
+    "query": "Plan a 1-day Singapore itinerary for a family with 3 kids under 10, budget SGD 200 total. Must be child-friendly, mostly indoor, and no more than 3 stops.",
+    "constraints": {"days": 1, "budget": 200, "indoor_only": true, "max_stops_per_day": 3}
+  },
+  {
+    "id": "H05",
+    "difficulty": "hard",
+    "query": "帮我规划3天新加坡行程，预算600新元，需要清真饮食，每天最多4个景点，尽量步行或地铁，不要打车。",
+    "constraints": {"days": 3, "budget": 600, "cuisine": ["halal"], "no_taxi": true, "max_stops_per_day": 4}
+  },
+  {
+    "id": "H06",
+    "difficulty": "hard",
+    "query": "Plan a 2-day Singapore itinerary for a senior couple, budget SGD 350. Prefer indoor air-conditioned venues, no more than 3 stops per day, and MRT travel only.",
+    "constraints": {"days": 2, "budget": 350, "indoor_only": true, "no_taxi": true, "max_stops_per_day": 3}
+  },
+  {
+    "id": "H07",
+    "difficulty": "hard",
+    "query": "规划3天新加坡行程，预算1500新元，2大1小（8岁），需要亲子友好景点，饮食要有中式选项，不坐出租车。",
+    "constraints": {"days": 3, "budget": 1500, "cuisine": ["chinese"], "no_taxi": true}
+  },
+  {
+    "id": "H08",
+    "difficulty": "hard",
+    "query": "Plan a 3-day Singapore itinerary for a solo budget traveler, budget SGD 150 total. Prefer free or very cheap attractions, street food only, and public transport only.",
+    "constraints": {"days": 3, "budget": 150, "no_taxi": true}
+  },
+  {
+    "id": "H09",
+    "difficulty": "hard",
+    "query": "帮我规划2天新加坡行程，预算700新元，全程室内空调场所，印度素食饮食，每天不超过3个景点，节奏非常轻松。",
+    "constraints": {"days": 2, "budget": 700, "indoor_only": true, "cuisine": ["indian", "vegetarian"], "max_stops_per_day": 3}
+  },
+  {
+    "id": "H10",
+    "difficulty": "hard",
+    "query": "Plan a 3-day Singapore itinerary for a group of 8 people, total budget SGD 3000. We need halal food, child-friendly stops, mostly indoor venues, and no more than 4 stops per day.",
+    "constraints": {"days": 3, "budget": 3000, "cuisine": ["halal"], "indoor_only": true, "max_stops_per_day": 4}
+  }
+]
